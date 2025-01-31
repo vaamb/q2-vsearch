@@ -14,6 +14,7 @@ import q2_vsearch._cluster_sequences
 import q2_vsearch._merge_pairs
 import q2_vsearch._chimera
 import q2_vsearch._stats
+import q2_vsearch._subsample
 from q2_vsearch._examples import cluster_features_de_novo
 
 from q2_vsearch._type import UchimeStats
@@ -424,6 +425,36 @@ plugin.methods.register_function(
                  'to filter chimeric features from the corresponding feature '
                  'table. For more details, please refer to the vsearch '
                  'documentation.')
+)
+
+
+plugin.methods.register_function(
+    function=q2_vsearch._subsample.subsample,
+    inputs={
+        'sequences': FeatureData[Sequence],
+    },
+    parameters={
+        'sample_size': qiime2.plugin.Int % qiime2.plugin.Range(1, None),
+        'random_seed': qiime2.plugin.Int % qiime2.plugin.Range(0, None),
+    },
+    outputs=[
+        ('subsampled_sequences', FeatureData[Sequence]),
+    ],
+    input_descriptions={
+        'sequences': 'The feature sequences to be subsampled.',
+    },
+    parameter_descriptions={
+        'sample_size': ('No vote pseudo-count, corresponding to the parameter n in '
+               'the chimera scoring function.'),
+        'random_seed': 'Minimum number of differences per segment.'
+    },
+    output_descriptions={
+        'subsampled_sequences': 'The subsampled sequences.',
+    },
+    name='Sequences subsampling with vsearch.',
+    description=('Apply the vsearch fastx_subsample method to subsample a set '
+                 'of sequences. The results of this method can be used '
+                 'to create training datasets.')
 )
 
 
